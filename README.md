@@ -9,7 +9,7 @@ add following to your steps
 
 ```
     - name: annotate uncovered lines
-      uses: @smartlyio/annotate-uncovered-lines-action
+      uses: smartlyio/annotate-uncovered-lines-action
       with:
         coverage-file: coverage/coverage-final.json
         base-ref: origin/${{github.base_ref}}
