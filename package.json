@@ -1,0 +1,29 @@
+{
+  "name": "annotate-uncovered-lines",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "",
+  "scripts": {
+    "build": "tsc",
+    "prebuild": "yarn clean && yarn lint",
+    "lint": "eslint --max-warnings=0  --ext .ts src",
+    "clean": "rm -rf dist",
+    "prepackit": "yarn build",
+    "packit": "rm -rf node_modules && yarn --production=true && git add --force node_modules"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^5.0.0",
+    "drange": "2.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "18.0.0",
+    "@typescript-eslint/eslint-plugin": "5.30.0",
+    "@typescript-eslint/parser": "5.30.0",
+    "eslint": "8.18.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-prettier": "4.1.0",
+    "prettier": "2.7.1",
+    "typescript": "4.7.4"
+  }
+}
