@@ -2,7 +2,8 @@
   "name": "annotate-uncovered-lines",
   "version": "1.0.0",
   "main": "dist/index.js",
-  "license": "",
+  "author": "Smartly.io Solutions Oy",
+  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "prebuild": "yarn clean && yarn lint",
