@@ -23,3 +23,7 @@ This is easiest to achieve with:
       with:
         fetch-depth: 0
 ```
+
+### development
+
+run `yarn package` to create a single file with all the dependencies
