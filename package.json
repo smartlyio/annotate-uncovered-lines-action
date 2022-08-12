@@ -9,7 +9,8 @@
     "prebuild": "yarn clean && yarn lint",
     "lint": "eslint --max-warnings=0  --ext .ts src",
     "clean": "rm -rf dist",
-    "package": "ncc build src/index.ts --source-map --license licenses.txt"
+    "package": "ncc build src/index.ts --source-map --license licenses.txt",
+    "version": "yarn build && yarn package && git add -f -- dist/index.js"
   },
   "dependencies": {
     "@actions/core": "^1.2.6",
