@@ -11,5 +11,5 @@ export declare type Result = {
     uncovered: number;
     uncoveredLines: Record<Path, Range>;
 };
-export declare function uncoveredLines(opts: Opts): Promise<Result>;
+export declare function run(opts: Opts): Promise<Result[]>;
 export {};

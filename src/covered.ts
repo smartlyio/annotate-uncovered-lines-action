@@ -3,6 +3,8 @@ import * as child from 'child_process';
 import { promisify } from 'util';
 import * as pathFs from 'path';
 import * as Range from 'drange';
+import { glob } from 'glob';
+import * as assert from 'assert';
 
 type Opts = {
   base: string;
@@ -104,8 +106,23 @@ async function coveredLines(opts: Opts): Promise<Record<Path, Lines>> {
 }
 
 export type Result = { covered: number; uncovered: number; uncoveredLines: Record<Path, Range> };
-export async function uncoveredLines(opts: Opts): Promise<Result> {
+async function uncoveredLines(opts: Opts): Promise<Result> {
   const coverage = await coveredLines(opts);
   const changes = await changedLines(opts);
   return uncovered({ coverage, changes });
+}
+
+export async function run(opts: Opts) {
+  const results = [];
+  for (const file of glob.sync(opts.coverage)) {
+    assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
+    results.push(
+      await uncoveredLines({
+        base: opts.base,
+        head: opts.head,
+        coverage: file
+      })
+    );
+  }
+  return results;
 }
