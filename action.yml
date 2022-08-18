@@ -6,5 +6,5 @@ inputs:
   base-ref:
     description: base branch to which to merge
 runs:
-  using: 'node16'
+  using: 'node12'
   main: 'dist/index.js'
