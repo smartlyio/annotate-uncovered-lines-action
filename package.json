@@ -13,7 +13,7 @@
     "version": "yarn build && yarn package && git add -f -- dist/index.js"
   },
   "dependencies": {
-    "@actions/core": "^1.2.6",
+    "@actions/core": "^1.9.1",
     "@actions/github": "^5.0.0",
     "drange": "2.0.1",
     "glob": "8.0.3"
