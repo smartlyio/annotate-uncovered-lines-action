@@ -8,7 +8,7 @@ export declare type Lines = Range;
 export declare type Path = string;
 export declare type Result = {
     covered: number;
-    uncovered: number;
+    total: number;
     uncoveredLines: Record<Path, Range>;
 };
 export declare function run(opts: Opts): Promise<Result[]>;

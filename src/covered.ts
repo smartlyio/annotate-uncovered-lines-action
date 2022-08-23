@@ -68,11 +68,13 @@ async function changedLines(opts: Opts): Promise<Record<Path, Lines>> {
 
 function uncovered(args: { coverage: Record<Path, Lines>; changes: Record<Path, Lines> }): Result {
   const result: Record<Path, Lines> = {};
-  const coveredChanges = 0;
-  const uncoveredChanges = 0;
+  let coveredChanges = 0;
+  let totalChanges = 0;
   for (const path of Object.keys(args.changes)) {
     const changes = args.changes[path] ?? [];
     const cov = args.coverage[path];
+    coveredChanges += cov.length;
+    totalChanges += changes.length;
     if (!cov) {
       continue;
     }
@@ -83,7 +85,7 @@ function uncovered(args: { coverage: Record<Path, Lines>; changes: Record<Path, 
   }
   return {
     covered: coveredChanges,
-    uncovered: uncoveredChanges,
+    total: totalChanges,
     uncoveredLines: result
   };
 }
@@ -105,14 +107,14 @@ async function coveredLines(opts: Opts): Promise<Record<Path, Lines>> {
   return result;
 }
 
-export type Result = { covered: number; uncovered: number; uncoveredLines: Record<Path, Range> };
+export type Result = { covered: number; total: number; uncoveredLines: Record<Path, Range> };
 async function uncoveredLines(opts: Opts): Promise<Result> {
   const coverage = await coveredLines(opts);
   const changes = await changedLines(opts);
   return uncovered({ coverage, changes });
 }
 
-export async function run(opts: Opts) {
+export async function run(opts: Opts): Promise<Result[]> {
   const results = [];
   for (const file of glob.sync(opts.coverage)) {
     assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
