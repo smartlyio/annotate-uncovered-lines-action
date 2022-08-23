@@ -66,19 +66,29 @@ async function changedLines(opts: Opts): Promise<Record<Path, Lines>> {
   return result;
 }
 
-function uncovered(args: { coverage: Record<Path, Lines>; changes: Record<Path, Lines> }): Result {
+function uncovered(args: { coverage: Record<Path, Hits>; changes: Record<Path, Lines> }): Result {
   const result: Record<Path, Lines> = {};
   let coveredChanges = 0;
   let totalChanges = 0;
   for (const path of Object.keys(args.changes)) {
+    const uncovered = new Range();
     const changes = args.changes[path] ?? new Range();
-    const cov = args.coverage[path];
-    if (!cov) {
+    const hits = args.coverage[path];
+    if (!hits) {
       continue;
     }
-    const uncovered: Lines = changes.clone().subtract(cov.clone());
-    totalChanges += changes.length ?? 0;
-    coveredChanges += changes.clone().intersect(cov.clone()).length;
+    for (const subrange of changes.subranges()) {
+      for (const hit of hits) {
+        if (subrange.low > hit.end || subrange.high < hit.start) {
+          continue;
+        }
+        if (hit.hits === 0) {
+          uncovered.add(hit.start, hit.end);
+        }
+      }
+    }
+    totalChanges += changes.length;
+    coveredChanges += changes.length - uncovered.length;
     if (uncovered.length) {
       result[path] = uncovered;
     }
@@ -90,21 +100,28 @@ function uncovered(args: { coverage: Record<Path, Lines>; changes: Record<Path, 
   };
 }
 
-async function coveredLines(opts: Opts): Promise<Record<Path, Lines>> {
+type Hits = Array<{
+  hits: number;
+  start: number;
+  end: number;
+}>;
+async function coveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   const coverage = JSON.parse(await promisify(readFile)(opts.coverage, 'utf8'));
-  const result: Record<Path, Lines> = {};
+  const result: Record<Path, Hits> = {};
   for (const absolutePath of Object.keys(coverage)) {
     const path = pathFs.relative(process.cwd(), absolutePath);
-    const collect: Lines = (result[path] = new Range());
+    const collect: Hits = [];
+    result[path] = collect;
     for (const statementIndex of Object.keys(coverage[absolutePath].s)) {
       const hit = coverage[absolutePath].statementMap[statementIndex];
       if (!hit) {
         continue;
       }
-      if (!coverage[absolutePath].s[statementIndex]) {
-        continue;
-      }
-      collect.add(hit.start.line, hit.end.line);
+      collect.push({
+        hits: coverage[absolutePath].s[statementIndex],
+        start: hit.start.line,
+        end: hit.end.line
+      });
     }
   }
   return result;
