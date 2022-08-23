@@ -35,6 +35,7 @@ jobs:
       run: |
         yarn package
   release:
+    needs: [build]
     runs-on: ubuntu-20.04
     name: "Build and release action"
     steps:
