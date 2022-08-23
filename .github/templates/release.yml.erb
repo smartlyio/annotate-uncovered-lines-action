@@ -5,6 +5,7 @@ on:
     branches: [master]
 
 jobs:
+  @import ./jobs/build
   release:
     runs-on: <%= ubuntu_version %>
     name: "Build and release action"

@@ -6,8 +6,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "prebuild": "yarn clean && yarn lint",
-    "lint": "eslint --max-warnings=0  --ext .ts src",
+    "prebuild": "yarn clean",
+    "lint": "eslint --max-warnings=0  --ext .ts src && tsc --noEmit",
     "clean": "rm -rf dist && rm -rf test-fixture",
     "package": "ncc build src/index.ts --source-map --license licenses.txt",
     "version": "yarn build && yarn package && git add -f -- dist/index.js",
