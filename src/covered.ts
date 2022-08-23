@@ -71,14 +71,14 @@ function uncovered(args: { coverage: Record<Path, Lines>; changes: Record<Path, 
   let coveredChanges = 0;
   let totalChanges = 0;
   for (const path of Object.keys(args.changes)) {
-    const changes = args.changes[path] ?? [];
+    const changes = args.changes[path] ?? new Range();
     const cov = args.coverage[path];
-    coveredChanges += cov.length;
-    totalChanges += changes.length;
     if (!cov) {
       continue;
     }
-    const uncovered: Lines = changes.subtract(cov);
+    const uncovered: Lines = changes.clone().subtract(cov.clone());
+    totalChanges += changes.length ?? 0;
+    coveredChanges += changes.clone().intersect(cov.clone()).length;
     if (uncovered.length) {
       result[path] = uncovered;
     }
@@ -96,9 +96,12 @@ async function coveredLines(opts: Opts): Promise<Record<Path, Lines>> {
   for (const absolutePath of Object.keys(coverage)) {
     const path = pathFs.relative(process.cwd(), absolutePath);
     const collect: Lines = (result[path] = new Range());
-    for (const statementIndex of Object.values<any>(coverage[absolutePath].s)) {
+    for (const statementIndex of Object.keys(coverage[absolutePath].s)) {
       const hit = coverage[absolutePath].statementMap[statementIndex];
       if (!hit) {
+        continue;
+      }
+      if (!coverage[absolutePath].s[statementIndex]) {
         continue;
       }
       collect.add(hit.start.line, hit.end.line);
