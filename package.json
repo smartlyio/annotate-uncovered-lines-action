@@ -17,8 +17,8 @@
     "test": "yarn jest"
   },
   "dependencies": {
-    "@actions/core": "^1.2.6",
-    "@actions/github": "^5.0.0",
+    "@actions/core": "1.9.1",
+    "@actions/github": "5.0.3",
     "drange": "2.0.1",
     "glob": "8.0.3"
   },
