@@ -11,8 +11,8 @@
     "clean": "rm -rf dist && rm -rf test-fixture",
     "package": "ncc build src/index.ts --source-map --license licenses.txt",
     "version": "yarn build && yarn package && git add -f -- dist/index.js",
-    "fixture:pack": "yarn jest -c test-fixture/jest.config.js --coverage && rm -f fixture.tgz && tar czf fixture.tgz test-fixture",
-    "fixture:setup": "rm -rf test-fixture && tar xzf fixture.tgz",
+    "fixture:pack": "rm -f fixture.tgz && tar czf fixture.tgz test-fixture",
+    "fixture:setup": "rm -rf test-fixture && tar xzf fixture.tgz && yarn jest -c test-fixture/jest.config.js --coverage",
     "pretest": "yarn fixture:setup",
     "test": "yarn jest"
   },
