@@ -73,12 +73,12 @@ function uncovered(args: { coverage: Record<Path, Hits>; changes: Record<Path, L
   for (const path of Object.keys(args.changes)) {
     const uncovered = new Range();
     const changes = args.changes[path] ?? new Range();
-    const hits = args.coverage[path];
+    const hits = args.coverage[path]?.sort((a, b) => a.start - b.start);
     if (!hits) {
       continue;
     }
     let lowerBoundIndex = 0;
-    for (const subrange of changes.subranges()) {
+    for (const subrange of changes.subranges().sort((a, b) => a.low - b.low)) {
       for (let i = lowerBoundIndex; hits[i].start < subrange.high; i++) {
         const hit = hits[i];
         if (subrange.low > hit.end) {

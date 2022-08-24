@@ -12980,19 +12980,19 @@ async function changedLines(opts) {
     return result;
 }
 function uncovered(args) {
-    var _a;
+    var _a, _b;
     const result = {};
     let coveredChanges = 0;
     let totalChanges = 0;
     for (const path of Object.keys(args.changes)) {
         const uncovered = new Range();
         const changes = (_a = args.changes[path]) !== null && _a !== void 0 ? _a : new Range();
-        const hits = args.coverage[path];
+        const hits = (_b = args.coverage[path]) === null || _b === void 0 ? void 0 : _b.sort((a, b) => a.start - b.start);
         if (!hits) {
             continue;
         }
         let lowerBoundIndex = 0;
-        for (const subrange of changes.subranges()) {
+        for (const subrange of changes.subranges().sort((a, b) => a.low - b.low)) {
             for (let i = lowerBoundIndex; hits[i].start < subrange.high; i++) {
                 const hit = hits[i];
                 if (subrange.low > hit.end) {
