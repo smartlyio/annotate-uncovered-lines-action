@@ -13,7 +13,7 @@ async function publishCheck(opts: { totals: { covered: number; total: number }; 
   const output = {
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
-    context: 'Coverage',
+    context: 'Change coverage',
     sha,
     state: 'success' as const,
     description: `Changed statement coverage ${totalCoverage.toFixed(2)}%`
