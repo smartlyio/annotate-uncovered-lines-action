@@ -6,20 +6,25 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "prebuild": "yarn clean && yarn lint",
-    "lint": "eslint --max-warnings=0  --ext .ts src",
-    "clean": "rm -rf dist",
+    "prebuild": "yarn clean",
+    "lint": "eslint --max-warnings=0  --ext .ts src && tsc --noEmit",
+    "clean": "rm -rf dist && rm -rf test-fixture",
     "package": "ncc build src/index.ts --source-map --license licenses.txt",
-    "version": "yarn build && yarn package && git add -f -- dist/index.js"
+    "version": "yarn build && yarn package && git add -f -- dist/index.js",
+    "fixture:pack": "rm -f fixture.tgz && tar czf fixture.tgz test-fixture",
+    "fixture:setup": "rm -rf test-fixture && tar xzf fixture.tgz && yarn jest -c test-fixture/jest.config.js --coverage",
+    "pretest": "yarn fixture:setup",
+    "test": "yarn jest"
   },
   "dependencies": {
-    "@actions/core": "^1.2.6",
-    "@actions/github": "^5.0.0",
+    "@actions/core": "1.9.1",
+    "@actions/github": "5.0.3",
     "drange": "2.0.1",
     "glob": "8.0.3"
   },
   "devDependencies": {
     "@types/glob": "7.2.0",
+    "@types/jest": "28.1.7",
     "@types/node": "18.0.0",
     "@typescript-eslint/eslint-plugin": "5.30.0",
     "@typescript-eslint/parser": "5.30.0",
@@ -27,7 +32,10 @@
     "eslint": "8.18.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.1.0",
+    "jest": "28.1.3",
     "prettier": "2.7.1",
+    "ts-jest": "28.0.8",
+    "ts-node": "10.9.1",
     "typescript": "4.7.4"
   }
 }

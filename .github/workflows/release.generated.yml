@@ -14,7 +14,28 @@ on:
     branches: [master]
 
 jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set Node.js 12.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: 12.x
+    - name: "Install"
+      run: |
+        yarn install
+    - name: "Lint"
+      run: |
+        yarn lint
+    - name: "Test"
+      run: |
+        yarn test
+    - name: "build"
+      run: |
+        yarn package
   release:
+    needs: [build]
     runs-on: ubuntu-20.04
     name: "Build and release action"
     steps:

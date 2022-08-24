@@ -60,59 +60,94 @@ async function changedLines(opts: Opts): Promise<Record<Path, Lines>> {
       if (!head) {
         continue;
       }
-      head.add(start, start + count - 1);
+      const high = start + count - 1;
+      head.add(Math.min(start, high), Math.max(start, high));
     }
   }
   return result;
 }
 
-function uncovered(args: { coverage: Record<Path, Lines>; changes: Record<Path, Lines> }): Result {
+function uncovered(args: { coverage: Record<Path, Hits>; changes: Record<Path, Lines> }): Result {
   const result: Record<Path, Lines> = {};
-  const coveredChanges = 0;
-  const uncoveredChanges = 0;
+  let coveredChanges = 0;
+  let totalChanges = 0;
   for (const path of Object.keys(args.changes)) {
-    const changes = args.changes[path] ?? [];
-    const cov = args.coverage[path];
-    if (!cov) {
+    const uncovered = new Range();
+    const changes = args.changes[path] ?? new Range();
+    const hits = args.coverage[path]?.sort((a, b) => a.start - b.start);
+    if (!hits) {
       continue;
     }
-    const uncovered: Lines = changes.subtract(cov);
+    let lowerBoundIndex = 0;
+    for (const subrange of changes.subranges().sort((a, b) => a.low - b.low)) {
+      for (let i = lowerBoundIndex; hits[i].start < subrange.high; i++) {
+        const hit = hits[i];
+        if (subrange.low > hit.end) {
+          // all following subranges will have 'low > current range 'low so
+          // no need to consider prior hits for those
+          lowerBoundIndex++;
+          // lets consider next hit
+          continue;
+        }
+        if (subrange.high < hit.start) {
+          // subrange ends before next hit starts
+          // all following hits will have 'start > current hit 'start
+          // so we are done with the current subrange
+          break;
+        }
+        if (hit.hits === 0) {
+          uncovered.add(hit.start, hit.end);
+        }
+      }
+    }
+    totalChanges += changes.length;
+    coveredChanges += changes.length - uncovered.length;
     if (uncovered.length) {
       result[path] = uncovered;
     }
   }
   return {
     covered: coveredChanges,
-    uncovered: uncoveredChanges,
+    total: totalChanges,
     uncoveredLines: result
   };
 }
 
-async function coveredLines(opts: Opts): Promise<Record<Path, Lines>> {
+type Hits = Array<{
+  hits: number;
+  start: number;
+  end: number;
+}>;
+async function coveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   const coverage = JSON.parse(await promisify(readFile)(opts.coverage, 'utf8'));
-  const result: Record<Path, Lines> = {};
+  const result: Record<Path, Hits> = {};
   for (const absolutePath of Object.keys(coverage)) {
     const path = pathFs.relative(process.cwd(), absolutePath);
-    const collect: Lines = (result[path] = new Range());
-    for (const statementIndex of Object.values<any>(coverage[absolutePath].s)) {
+    const collect: Hits = [];
+    result[path] = collect;
+    for (const statementIndex of Object.keys(coverage[absolutePath].s)) {
       const hit = coverage[absolutePath].statementMap[statementIndex];
       if (!hit) {
         continue;
       }
-      collect.add(hit.start.line, hit.end.line);
+      collect.push({
+        hits: coverage[absolutePath].s[statementIndex],
+        start: Math.min(hit.start.line, hit.end.line),
+        end: Math.max(hit.start.line, hit.end.line)
+      });
     }
   }
   return result;
 }
 
-export type Result = { covered: number; uncovered: number; uncoveredLines: Record<Path, Range> };
+export type Result = { covered: number; total: number; uncoveredLines: Record<Path, Range> };
 async function uncoveredLines(opts: Opts): Promise<Result> {
   const coverage = await coveredLines(opts);
   const changes = await changedLines(opts);
   return uncovered({ coverage, changes });
 }
 
-export async function run(opts: Opts) {
+export async function run(opts: Opts): Promise<Result[]> {
   const results = [];
   for (const file of glob.sync(opts.coverage)) {
     assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
