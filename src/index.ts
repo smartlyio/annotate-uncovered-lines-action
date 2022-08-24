@@ -5,10 +5,7 @@ import * as coverage from './covered';
 const inputFileArgument = 'coverage-file';
 const baseRefArgument = 'base-ref';
 
-async function publishCheck(opts: {
-  totals: { covered: number; total: number };
-  token: string;
-}) {
+async function publishCheck(opts: { totals: { covered: number; total: number }; token: string }) {
   const sha = github.context.payload.pull_request?.head?.sha || github.context.sha;
   const octokit = github.getOctokit(opts.token);
 
