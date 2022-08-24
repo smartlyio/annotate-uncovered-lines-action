@@ -12974,7 +12974,8 @@ async function changedLines(opts) {
             if (!head) {
                 continue;
             }
-            head.add(start, start + count - 1);
+            const high = start + count - 1;
+            head.add(Math.min(start, high), Math.max(start, high));
         }
     }
     return result;
@@ -13039,8 +13040,8 @@ async function coveredLines(opts) {
             }
             collect.push({
                 hits: coverage[absolutePath].s[statementIndex],
-                start: hit.start.line,
-                end: hit.end.line
+                start: Math.min(hit.start.line, hit.end.line),
+                end: Math.max(hit.start.line, hit.end.line)
             });
         }
     }
