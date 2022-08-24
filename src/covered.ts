@@ -77,10 +77,22 @@ function uncovered(args: { coverage: Record<Path, Hits>; changes: Record<Path, L
     if (!hits) {
       continue;
     }
+    let lowerBoundIndex = 0;
     for (const subrange of changes.subranges()) {
-      for (const hit of hits) {
-        if (subrange.low > hit.end || subrange.high < hit.start) {
+      for (let i = lowerBoundIndex; hits[i].start < subrange.high; i++) {
+        const hit = hits[i];
+        if (subrange.low > hit.end) {
+          // all following subranges will have 'low > current range 'low so
+          // no need to consider prior hits for those
+          lowerBoundIndex++;
+          // lets consider next hit
           continue;
+        }
+        if (subrange.high < hit.start) {
+          // subrange ends before next hit starts
+          // all following hits will have 'start > current hit 'start
+          // so we are done with the current subrange
+          break;
         }
         if (hit.hits === 0) {
           uncovered.add(hit.start, hit.end);
