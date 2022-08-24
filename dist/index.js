@@ -13291,11 +13291,14 @@ async function run() {
         total += result.total;
         for (const [file, lines] of Object.entries(result.uncoveredLines)) {
             for (const line of lines.subranges()) {
-                core.warning('This change is not covered by tests', {
+                const data = {
                     file,
                     startLine: line.low,
                     endLine: line.high
-                });
+                };
+                // eslint-disable-next-line no-console
+                console.log(data);
+                core.warning('This change is not covered by tests', data);
             }
         }
     }
