@@ -80,7 +80,7 @@ function uncovered(args: { coverage: Record<Path, Hits>; changes: Record<Path, L
     }
     let lowerBoundIndex = 0;
     for (const subrange of changes.subranges().sort((a, b) => a.low - b.low)) {
-      for (let i = lowerBoundIndex; hits[i].start < subrange.high; i++) {
+      for (let i = lowerBoundIndex; i < hits.length && hits[i].start < subrange.high; i++) {
         const hit = hits[i];
         if (subrange.low > hit.end) {
           // all following subranges will have 'low > current range 'low so
