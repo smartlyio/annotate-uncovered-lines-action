@@ -6,6 +6,15 @@ declare type Opts = {
 };
 export declare type Lines = Range;
 export declare type Path = string;
+export declare function uncovered(args: {
+    coverage: Record<Path, Hits>;
+    changes: Record<Path, Lines>;
+}): Result;
+declare type Hits = Array<{
+    hits: number;
+    start: number;
+    end: number;
+}>;
 export declare type Result = {
     covered: number;
     total: number;

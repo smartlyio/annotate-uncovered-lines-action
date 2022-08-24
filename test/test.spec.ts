@@ -2,6 +2,77 @@ import * as coverage from '../src/covered';
 import * as Range from 'drange';
 
 describe('coverage', () => {
+  describe('uncovered', () => {
+    it('handles multiple changes', () => {
+      const result = coverage.uncovered({
+        coverage: {
+          'test.ts': [{ hits: 0, start: 1, end: 4 }]
+        },
+        changes: { 'test.ts': new Range().add(1, 2).add(1, 4) }
+      });
+      expect(result).toEqual({
+        covered: 0,
+        total: 4,
+        uncoveredLines: {
+          'test.ts': new Range(1, 4)
+        }
+      });
+    });
+    it('handles multiple hits', () => {
+      const result = coverage.uncovered({
+        coverage: {
+          'test.ts': [
+            { hits: 0, start: 1, end: 4 },
+            { hits: 0, start: 3, end: 9 }
+          ]
+        },
+        changes: { 'test.ts': new Range().add(1, 2) }
+      });
+      expect(result).toEqual({
+        covered: 0,
+        total: 2,
+        uncoveredLines: {
+          'test.ts': new Range(1, 2)
+        }
+      });
+    });
+    it('reports covered', () => {
+      const result = coverage.uncovered({
+        coverage: { 'test.ts': [{ hits: 1, start: 1, end: 10 }] },
+        changes: { 'test.ts': new Range().add(1, 2) }
+      });
+      expect(result).toEqual({
+        covered: 2,
+        total: 2,
+        uncoveredLines: {}
+      });
+    });
+    it('reports uncovered', () => {
+      const result = coverage.uncovered({
+        coverage: { 'test.ts': [{ hits: 0, start: 1, end: 10 }] },
+        changes: { 'test.ts': new Range().add(1, 2) }
+      });
+      expect(result).toEqual({
+        covered: 0,
+        total: 2,
+        uncoveredLines: {
+          'test.ts': new Range().add(1, 2)
+        }
+      });
+    });
+    it('works with empty result', () => {
+      const result = coverage.uncovered({
+        coverage: { 'test.ts': [] },
+        changes: { 'test.ts': new Range() }
+      });
+      expect(result).toEqual({
+        covered: 0,
+        total: 0,
+        uncoveredLines: {}
+      });
+    });
+  });
+
   it('generate coverage', async () => {
     const cwd = process.cwd();
     try {
