@@ -9,14 +9,16 @@ async function publishCheck(opts: { totals: { covered: number; total: number }; 
   const sha = github.context.payload.pull_request?.head?.sha || github.context.sha;
   const octokit = github.getOctokit(opts.token);
 
-  const totalCoverage = (opts.totals.covered / opts.totals.total) * 100;
+  const description = opts.totals.total
+    ? `Changed statement coverage ${((opts.totals.covered / opts.totals.total) * 100).toFixed(2)}%`
+    : `No changes`;
   const output = {
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     context: 'Change coverage',
     sha,
     state: 'success' as const,
-    description: `Changed statement coverage ${totalCoverage.toFixed(2)}%`
+    description
   };
   await octokit.rest.repos.createCommitStatus(output);
 }

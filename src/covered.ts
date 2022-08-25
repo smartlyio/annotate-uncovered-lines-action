@@ -67,7 +67,10 @@ async function changedLines(opts: Opts): Promise<Record<Path, Lines>> {
   return result;
 }
 
-function uncovered(args: { coverage: Record<Path, Hits>; changes: Record<Path, Lines> }): Result {
+export function uncovered(args: {
+  coverage: Record<Path, Hits>;
+  changes: Record<Path, Lines>;
+}): Result {
   const result: Record<Path, Lines> = {};
   let coveredChanges = 0;
   let totalChanges = 0;
@@ -96,7 +99,7 @@ function uncovered(args: { coverage: Record<Path, Hits>; changes: Record<Path, L
           break;
         }
         if (hit.hits === 0) {
-          uncovered.add(hit.start, hit.end);
+          uncovered.add(new Range(subrange.low, subrange.high).intersect(hit.start, hit.end));
         }
       }
     }
