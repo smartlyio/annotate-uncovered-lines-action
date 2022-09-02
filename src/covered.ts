@@ -38,12 +38,15 @@ async function runGit(command: string): Promise<string> {
     });
   });
 }
+
+const diff = /diff --git a\/.* b\/(.*)/;
+
 async function changedLines(opts: Opts): Promise<Record<Path, Lines>> {
   const stdout = await runGit(`git diff -w -U0 ${opts.base}...${opts.head}`);
   const result: Record<Path, Lines> = {};
   let currentFile: Path | null = null;
   for (const line of stdout.split('\n')) {
-    const fileHeader = line.match(/^\+\+\+ b\/(.*)/);
+    const fileHeader = line.match(diff);
     if (fileHeader && fileHeader[1]) {
       currentFile = fileHeader[1];
       result[currentFile] = new Range();

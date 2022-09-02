@@ -12952,12 +12952,13 @@ async function runGit(command) {
         });
     });
 }
+const diff = /diff --git a\/.* b\/(.*)/;
 async function changedLines(opts) {
     const stdout = await runGit(`git diff -w -U0 ${opts.base}...${opts.head}`);
     const result = {};
     let currentFile = null;
     for (const line of stdout.split('\n')) {
-        const fileHeader = line.match(/^\+\+\+ b\/(.*)/);
+        const fileHeader = line.match(diff);
         if (fileHeader && fileHeader[1]) {
             currentFile = fileHeader[1];
             result[currentFile] = new Range();
