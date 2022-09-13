@@ -152,14 +152,16 @@ async function istanbulCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
 async function lcovCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   const fileContents = await promisify(readFile)(opts.coverage, 'utf8');
   const lcovData = parseLCOV(fileContents);
-  return lcovData.reduce<Record<Path, Hits>>((res, cur) => {
-    const path = pathFs.isAbsolute(cur.file) ? pathFs.relative(process.cwd(), cur.file) : cur.file;
-    res[path] = cur.lines.details.map(({ line, hit }) => ({
+  return lcovData.reduce<Record<Path, Hits>>((result, fileEntry) => {
+    const path = pathFs.isAbsolute(fileEntry.file)
+      ? pathFs.relative(process.cwd(), fileEntry.file)
+      : fileEntry.file;
+    result[path] = fileEntry.lines.details.map(({ line, hit }) => ({
       hits: hit,
       start: line,
       end: line
     }));
-    return res;
+    return result;
   }, {});
 }
 
