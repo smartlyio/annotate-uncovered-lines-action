@@ -8,6 +8,7 @@ inputs:
   coverage-type:
     description: type of the coverage data - either 'istanbul' or 'lcov'. Default 'istanbul'.
     required: false
+    default: 'istanbul'
   base-ref:
     description: base branch to which to merge
 runs:
