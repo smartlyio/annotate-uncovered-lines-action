@@ -6,7 +6,8 @@ inputs:
   coverage-file:
     description: containing the coverage data in either istanbul or lcov format
   coverage-type:
-    description: type of the coverage data - either 'istanbul' or 'lcov'
+    description: type of the coverage data - either 'istanbul' or 'lcov'. Default 'istanbul'.
+    required: false
   base-ref:
     description: base branch to which to merge
 runs:
