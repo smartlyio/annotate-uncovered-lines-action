@@ -1,5 +1,5 @@
-name: "Annotate uncovered changed lines"
-description: "Annotates changed lines in this pr that are not covered by tests"
+name: 'Annotate uncovered changed lines'
+description: 'Annotates changed lines in this pr that are not covered by tests'
 inputs:
   github-token:
     description: github token for creating a commit status
@@ -10,5 +10,5 @@ inputs:
   base-ref:
     description: base branch to which to merge
 runs:
-  using: "node16"
-  main: "dist/index.js"
+  using: 'node16'
+  main: 'dist/index.js'
