@@ -3,6 +3,7 @@ import * as github from '@actions/github';
 import * as coverage from './covered';
 
 const inputFileArgument = 'coverage-file';
+const coverageTypeArgument = 'coverage-type';
 const baseRefArgument = 'base-ref';
 
 async function publishCheck(opts: { totals: { covered: number; total: number }; token: string }) {
@@ -23,12 +24,24 @@ async function publishCheck(opts: { totals: { covered: number; total: number }; 
   await octokit.rest.repos.createCommitStatus(output);
 }
 
+function parseCoverageType(coverageType: string): 'lcov' | 'istanbul' {
+  if (!coverageType) {
+    return 'istanbul';
+  } else if (coverageType == 'lcov' || coverageType == 'istanbul') {
+    return coverageType;
+  }
+  throw new Error("coverage-type must be either 'istanbul' or 'lcov'");
+}
+
 async function run() {
   const file = core.getInput(inputFileArgument);
+  const coverageType = parseCoverageType(core.getInput(coverageTypeArgument, { required: false }));
+
   const results = await coverage.run({
     base: core.getInput(baseRefArgument),
     head: github.context.sha,
-    coverage: file
+    coverage: file,
+    coverageType: coverageType
   });
   let covered = 0;
   let total = 0;

@@ -80,7 +80,31 @@ describe('coverage', () => {
       const results = await coverage.run({
         base: 'master',
         head: 'test-branch',
-        coverage: process.cwd() + '/coverage/coverage-final.json'
+        coverage: process.cwd() + '/coverage/coverage-final.json',
+        coverageType: 'istanbul'
+      });
+      expect(results).toEqual([
+        {
+          covered: 15,
+          total: 17,
+          uncoveredLines: {
+            'example.ts': new Range().add(6, 6).add(16, 16)
+          }
+        }
+      ]);
+    } finally {
+      process.chdir(cwd);
+    }
+  });
+  it('generate coverage for lcov', async () => {
+    const cwd = process.cwd();
+    try {
+      process.chdir('./test-fixture');
+      const results = await coverage.run({
+        base: 'master',
+        head: 'test-branch',
+        coverage: process.cwd() + '/coverage/lcov.info',
+        coverageType: 'lcov'
       });
       expect(results).toEqual([
         {

@@ -5,11 +5,13 @@ import * as pathFs from 'path';
 import * as Range from 'drange';
 import { glob } from 'glob';
 import * as assert from 'assert';
+import parseLCOV from 'parse-lcov';
 
 type Opts = {
   base: string;
   coverage: string;
   head: string;
+  coverageType: 'istanbul' | 'lcov';
 };
 
 export type Lines = Range;
@@ -122,6 +124,10 @@ type Hits = Array<{
   end: number;
 }>;
 async function coveredLines(opts: Opts): Promise<Record<Path, Hits>> {
+  return opts.coverageType === 'lcov' ? lcovCoveredLines(opts) : istanbulCoveredLines(opts);
+}
+
+async function istanbulCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   const coverage = JSON.parse(await promisify(readFile)(opts.coverage, 'utf8'));
   const result: Record<Path, Hits> = {};
   for (const absolutePath of Object.keys(coverage)) {
@@ -143,6 +149,20 @@ async function coveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   return result;
 }
 
+async function lcovCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
+  const fileContents = await promisify(readFile)(opts.coverage, 'utf8');
+  const lcovData = parseLCOV(fileContents);
+  return lcovData.reduce<Record<Path, Hits>>((res, cur) => {
+    const path = pathFs.isAbsolute(cur.file) ? pathFs.relative(process.cwd(), cur.file) : cur.file;
+    res[path] = cur.lines.details.map(({ line, hit }) => ({
+      hits: hit,
+      start: line,
+      end: line
+    }));
+    return res;
+  }, {});
+}
+
 export type Result = { covered: number; total: number; uncoveredLines: Record<Path, Range> };
 async function uncoveredLines(opts: Opts): Promise<Result> {
   const coverage = await coveredLines(opts);
@@ -153,12 +173,16 @@ async function uncoveredLines(opts: Opts): Promise<Result> {
 export async function run(opts: Opts): Promise<Result[]> {
   const results = [];
   for (const file of glob.sync(opts.coverage)) {
-    assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
+    if (opts.coverageType === 'istanbul') {
+      assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
+    }
+
     results.push(
       await uncoveredLines({
         base: opts.base,
         head: opts.head,
-        coverage: file
+        coverage: file,
+        coverageType: opts.coverageType
       })
     );
   }
