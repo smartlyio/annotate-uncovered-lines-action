@@ -12,7 +12,7 @@
     "package": "ncc build src/index.ts --source-map --license licenses.txt",
     "version": "yarn build && yarn package && git add -f -- dist/index.js",
     "fixture:pack": "rm -f fixture.tgz && tar czf fixture.tgz test-fixture",
-    "fixture:setup": "rm -rf test-fixture && tar xzf fixture.tgz && yarn jest -c test-fixture/jest.config.js --coverage",
+    "fixture:setup": "rm -rf test-fixture && tar xzf fixture.tgz && yarn --cwd test-fixture install && yarn --cwd test-fixture jest -c jest.config.js --coverage",
     "pretest": "yarn fixture:setup",
     "test": "yarn jest"
   },
@@ -20,7 +20,8 @@
     "@actions/core": "1.9.1",
     "@actions/github": "5.0.3",
     "drange": "2.0.1",
-    "glob": "8.0.3"
+    "glob": "8.0.3",
+    "parse-lcov": "^1.0.4"
   },
   "devDependencies": {
     "@types/glob": "7.2.0",

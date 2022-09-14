@@ -5,7 +5,8 @@ async function test(opts: { coverageFile: string; cwd: string }) {
   const results = await coverage.run({
     base: 'origin/master',
     head: 'head',
-    coverage: opts.coverageFile
+    coverage: opts.coverageFile,
+    coverageType: 'istanbul'
   });
   for (const result of results) {
     // eslint-disable-next-line no-console
