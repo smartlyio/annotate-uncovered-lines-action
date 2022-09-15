@@ -24,7 +24,7 @@ async function publishCheck(opts: { totals: { covered: number; total: number }; 
   await octokit.rest.repos.createCommitStatus(output);
 }
 
-export function parseCoverageType(coverageType: string): 'lcov' | 'istanbul' {
+function parseCoverageType(coverageType: string): 'lcov' | 'istanbul' {
   if (!coverageType) {
     return 'istanbul';
   } else if (coverageType == 'lcov' || coverageType == 'istanbul') {
