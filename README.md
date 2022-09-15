@@ -13,7 +13,7 @@ add following to your steps
       with:
         coverage-file: packages/*/coverage/coverage-final.json
         base-ref: origin/${{github.base_ref}}
-        coverage-type: 'istanbul' # or 'lcov'
+        coverage-type: 'istanbul' # or 'lcov' for lcov coverage data
 ```
 
 Note that the action uses `git` internally so it requires a full clone of the repository prior to running.
