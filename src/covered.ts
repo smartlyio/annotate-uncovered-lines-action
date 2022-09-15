@@ -154,8 +154,8 @@ async function lcovCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   const lcovData = parseLCOV(fileContents);
   return lcovData.reduce<Record<Path, Hits>>((result, fileEntry) => {
     const path = pathFs.isAbsolute(fileEntry.file)
-      ? pathFs.relative(process.cwd(), fileEntry.file)
-      : fileEntry.file;
+      ? pathFs.normalize(pathFs.relative(process.cwd(), fileEntry.file))
+      : pathFs.normalize(fileEntry.file);
     result[path] = fileEntry.lines.details.map(({ line, hit }) => ({
       hits: hit,
       start: line,
