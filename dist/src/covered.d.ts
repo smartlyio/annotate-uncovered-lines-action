@@ -3,6 +3,7 @@ declare type Opts = {
     base: string;
     coverage: string;
     head: string;
+    coverageType: 'istanbul' | 'lcov';
 };
 export declare type Lines = Range;
 export declare type Path = string;

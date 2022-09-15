@@ -8,6 +8,7 @@ const pathFs = require("path");
 const Range = require("drange");
 const glob_1 = require("glob");
 const assert = require("assert");
+const parse_lcov_1 = require("parse-lcov");
 async function runGit(command) {
     const [ex, ...args] = command.split(' ');
     return new Promise((ok, fail) => {
@@ -107,6 +108,9 @@ function uncovered(args) {
 }
 exports.uncovered = uncovered;
 async function coveredLines(opts) {
+    return opts.coverageType === 'lcov' ? lcovCoveredLines(opts) : istanbulCoveredLines(opts);
+}
+async function istanbulCoveredLines(opts) {
     const coverage = JSON.parse(await (0, util_1.promisify)(fs_1.readFile)(opts.coverage, 'utf8'));
     const result = {};
     for (const absolutePath of Object.keys(coverage)) {
@@ -127,6 +131,21 @@ async function coveredLines(opts) {
     }
     return result;
 }
+async function lcovCoveredLines(opts) {
+    const fileContents = await (0, util_1.promisify)(fs_1.readFile)(opts.coverage, 'utf8');
+    const lcovData = (0, parse_lcov_1.default)(fileContents);
+    return lcovData.reduce((result, fileEntry) => {
+        const path = pathFs.isAbsolute(fileEntry.file)
+            ? pathFs.normalize(pathFs.relative(process.cwd(), fileEntry.file))
+            : pathFs.normalize(fileEntry.file);
+        result[path] = fileEntry.lines.details.map(({ line, hit }) => ({
+            hits: hit,
+            start: line,
+            end: line
+        }));
+        return result;
+    }, {});
+}
 async function uncoveredLines(opts) {
     const coverage = await coveredLines(opts);
     const changes = await changedLines(opts);
@@ -135,11 +154,14 @@ async function uncoveredLines(opts) {
 async function run(opts) {
     const results = [];
     for (const file of glob_1.glob.sync(opts.coverage)) {
-        assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
+        if (opts.coverageType === 'istanbul') {
+            assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
+        }
         results.push(await uncoveredLines({
             base: opts.base,
             head: opts.head,
-            coverage: file
+            coverage: file,
+            coverageType: opts.coverageType
         }));
     }
     return results;
