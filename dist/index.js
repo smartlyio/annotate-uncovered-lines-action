@@ -13491,7 +13491,7 @@ async function publishCheck(opts) {
     const sha = ((_b = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head) === null || _b === void 0 ? void 0 : _b.sha) || github.context.sha;
     const octokit = github.getOctokit(opts.token);
     const description = opts.totals.total
-        ? `Changed statement coverage ${((opts.totals.covered / opts.totals.total) * 100).toFixed(2)}%`
+        ? `${((opts.totals.covered / opts.totals.total) * 100).toFixed(2)}% of changed statements covered by tests`
         : `No changes`;
     const output = {
         owner: github.context.repo.owner,
