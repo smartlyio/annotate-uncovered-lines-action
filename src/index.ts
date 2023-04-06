@@ -11,7 +11,9 @@ async function publishCheck(opts: { totals: { covered: number; total: number }; 
   const octokit = github.getOctokit(opts.token);
 
   const description = opts.totals.total
-    ? `Changed statement coverage ${((opts.totals.covered / opts.totals.total) * 100).toFixed(2)}%`
+    ? `${((opts.totals.covered / opts.totals.total) * 100).toFixed(
+        2
+      )}% of changed statements covered by tests`
     : `No changes`;
   const output = {
     owner: github.context.repo.owner,
