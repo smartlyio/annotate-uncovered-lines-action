@@ -12,5 +12,5 @@ inputs:
   base-ref:
     description: base branch to which to merge
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
