@@ -1,6 +1,5 @@
-import { readFile } from 'fs';
+import { readFile } from 'fs/promises';
 import * as child from 'child_process';
-import { promisify } from 'util';
 import * as pathFs from 'path';
 import * as Range from 'drange';
 import * as assert from 'assert';
@@ -127,7 +126,7 @@ async function coveredLines(opts: Opts): Promise<Record<Path, Hits>> {
 }
 
 async function istanbulCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
-  const coverage = JSON.parse(await promisify(readFile)(opts.coverage, 'utf8'));
+  const coverage = JSON.parse(await readFile(opts.coverage, 'utf8'));
   const result: Record<Path, Hits> = {};
   for (const absolutePath of Object.keys(coverage)) {
     const path = pathFs.relative(process.cwd(), absolutePath);
@@ -149,7 +148,7 @@ async function istanbulCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
 }
 
 async function lcovCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
-  const fileContents = await promisify(readFile)(opts.coverage, 'utf8');
+  const fileContents = await readFile(opts.coverage, 'utf8');
   const lcovData = parseLCOV(fileContents);
   return lcovData.reduce<Record<Path, Hits>>((result, fileEntry) => {
     const path = pathFs.isAbsolute(fileEntry.file)
