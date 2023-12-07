@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import * as coverage from './covered';
 
 const inputFileArgument = 'coverage-file';
-const coverageTypeArgument = 'coverage-type';
+const coverageTypeArgument = 'coverage-format';
 const baseRefArgument = 'base-ref';
 
 async function publishCheck(opts: { totals: { covered: number; total: number }; token: string }) {

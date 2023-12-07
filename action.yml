@@ -5,8 +5,8 @@ inputs:
     description: github token for creating a commit status
   coverage-file:
     description: containing the coverage data in either istanbul or lcov format
-  coverage-type:
-    description: type of the coverage data - either 'istanbul' or 'lcov'. Default 'istanbul'.
+  coverage-format:
+    description: Format of the coverage file - either 'istanbul' or 'lcov'. Default 'istanbul'.
     required: false
     default: 'istanbul'
   base-ref:
