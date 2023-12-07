@@ -3,7 +3,6 @@ import * as child from 'child_process';
 import { promisify } from 'util';
 import * as pathFs from 'path';
 import * as Range from 'drange';
-import { glob } from 'glob';
 import * as assert from 'assert';
 import parseLCOV from 'parse-lcov';
 
@@ -34,7 +33,7 @@ async function runGit(command: string): Promise<string> {
     });
     run.on('error', (err: Error) => {
       fail(`got error from rungit "${err.message}" ${err.stack}
-      
+
       stderr:
       ${errors.join('')}`);
     });
@@ -172,21 +171,16 @@ async function uncoveredLines(opts: Opts): Promise<Result> {
   return uncovered({ coverage, changes });
 }
 
-export async function run(opts: Opts): Promise<Result[]> {
-  const results = [];
-  for (const file of glob.sync(opts.coverage)) {
-    if (opts.coverageType === 'istanbul') {
-      assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
-    }
-
-    results.push(
-      await uncoveredLines({
-        base: opts.base,
-        head: opts.head,
-        coverage: file,
-        coverageType: opts.coverageType
-      })
-    );
+export async function run(opts: Opts): Promise<Result> {
+  const file = opts.coverage;
+  if (opts.coverageType === 'istanbul') {
+    assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
   }
-  return results;
+
+  return await uncoveredLines({
+    base: opts.base,
+    head: opts.head,
+    coverage: file,
+    coverageType: opts.coverageType
+  });
 }

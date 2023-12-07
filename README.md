@@ -11,7 +11,7 @@ add following to your steps
     - name: annotate uncovered lines
       uses: smartlyio/annotate-uncovered-lines-action
       with:
-        coverage-file: packages/*/coverage/coverage-final.json
+        coverage-file: coverage/coverage-final.json
         base-ref: origin/${{github.base_ref}}
         coverage-type: 'istanbul' # or 'lcov' for lcov coverage data
 ```
