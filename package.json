@@ -20,11 +20,9 @@
     "@actions/core": "1.9.1",
     "@actions/github": "5.0.3",
     "drange": "2.0.1",
-    "glob": "8.0.3",
     "parse-lcov": "^1.0.4"
   },
   "devDependencies": {
-    "@types/glob": "7.2.0",
     "@types/jest": "28.1.7",
     "@types/node": "18.0.0",
     "@typescript-eslint/eslint-plugin": "5.30.0",
