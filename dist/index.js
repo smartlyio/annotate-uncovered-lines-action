@@ -9886,9 +9886,8 @@ function wrappy (fn, cb) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = exports.uncovered = void 0;
-const fs_1 = __nccwpck_require__(7147);
+const promises_1 = __nccwpck_require__(3292);
 const child = __nccwpck_require__(2081);
-const util_1 = __nccwpck_require__(3837);
 const pathFs = __nccwpck_require__(1017);
 const Range = __nccwpck_require__(1188);
 const assert = __nccwpck_require__(9491);
@@ -9995,7 +9994,7 @@ async function coveredLines(opts) {
     return opts.coverageType === 'lcov' ? lcovCoveredLines(opts) : istanbulCoveredLines(opts);
 }
 async function istanbulCoveredLines(opts) {
-    const coverage = JSON.parse(await (0, util_1.promisify)(fs_1.readFile)(opts.coverage, 'utf8'));
+    const coverage = JSON.parse(await (0, promises_1.readFile)(opts.coverage, 'utf8'));
     const result = {};
     for (const absolutePath of Object.keys(coverage)) {
         const path = pathFs.relative(process.cwd(), absolutePath);
@@ -10016,7 +10015,7 @@ async function istanbulCoveredLines(opts) {
     return result;
 }
 async function lcovCoveredLines(opts) {
-    const fileContents = await (0, util_1.promisify)(fs_1.readFile)(opts.coverage, 'utf8');
+    const fileContents = await (0, promises_1.readFile)(opts.coverage, 'utf8');
     const lcovData = (0, parse_lcov_1.default)(fileContents);
     return lcovData.reduce((result, fileEntry) => {
         const path = pathFs.isAbsolute(fileEntry.file)
@@ -10097,6 +10096,14 @@ module.exports = require("events");
 
 "use strict";
 module.exports = require("fs");
+
+/***/ }),
+
+/***/ 3292:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs/promises");
 
 /***/ }),
 
