@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import * as coverage from './covered';
 
 const inputFileArgument = 'coverage-file';
-const coverageTypeArgument = 'coverage-type';
+const coverageTypeArgument = 'coverage-format';
 const baseRefArgument = 'base-ref';
 
 async function publishCheck(opts: { totals: { covered: number; total: number }; token: string }) {
@@ -39,7 +39,7 @@ async function run() {
   const file = core.getInput(inputFileArgument);
   const coverageType = parseCoverageType(core.getInput(coverageTypeArgument, { required: false }));
 
-  const results = await coverage.run({
+  const result = await coverage.run({
     base: core.getInput(baseRefArgument),
     head: github.context.sha,
     coverage: file,
@@ -47,20 +47,18 @@ async function run() {
   });
   let covered = 0;
   let total = 0;
-  for (const result of results) {
-    covered += result.covered;
-    total += result.total;
-    for (const [file, lines] of Object.entries(result.uncoveredLines)) {
-      for (const line of lines.subranges()) {
-        const data = {
-          file,
-          startLine: line.low,
-          endLine: line.high
-        };
-        // eslint-disable-next-line no-console
-        console.log(data);
-        core.warning('This change is not covered by tests', data);
-      }
+  covered += result.covered;
+  total += result.total;
+  for (const [file, lines] of Object.entries(result.uncoveredLines)) {
+    for (const line of lines.subranges()) {
+      const data = {
+        file,
+        startLine: line.low,
+        endLine: line.high
+      };
+      // eslint-disable-next-line no-console
+      console.log(data);
+      core.warning('This change is not covered by tests', data);
     }
   }
   await publishCheck({
