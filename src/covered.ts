@@ -5,11 +5,13 @@ import * as Range from 'drange';
 import * as assert from 'assert';
 import parseLCOV from 'parse-lcov';
 
+export type CoverageFormat = 'lcov' | 'istanbul';
+
 type Opts = {
   base: string;
   coverage: string;
   head: string;
-  coverageType: 'istanbul' | 'lcov';
+  coverageFormat: CoverageFormat;
 };
 
 export type Lines = Range;
@@ -122,7 +124,7 @@ type Hits = Array<{
   end: number;
 }>;
 async function coveredLines(opts: Opts): Promise<Record<Path, Hits>> {
-  return opts.coverageType === 'lcov' ? lcovCoveredLines(opts) : istanbulCoveredLines(opts);
+  return opts.coverageFormat === 'lcov' ? lcovCoveredLines(opts) : istanbulCoveredLines(opts);
 }
 
 async function istanbulCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
@@ -172,7 +174,7 @@ async function uncoveredLines(opts: Opts): Promise<Result> {
 
 export async function run(opts: Opts): Promise<Result> {
   const file = opts.coverage;
-  if (opts.coverageType === 'istanbul') {
+  if (opts.coverageFormat === 'istanbul') {
     assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
   }
 
@@ -180,6 +182,6 @@ export async function run(opts: Opts): Promise<Result> {
     base: opts.base,
     head: opts.head,
     coverage: file,
-    coverageType: opts.coverageType
+    coverageFormat: opts.coverageFormat
   });
 }

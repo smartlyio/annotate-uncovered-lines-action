@@ -81,7 +81,7 @@ describe('coverage', () => {
         base: 'master',
         head: 'test-branch',
         coverage: process.cwd() + '/coverage/coverage-final.json',
-        coverageType: 'istanbul'
+        coverageFormat: 'istanbul'
       });
       expect(result).toEqual({
         covered: 15,
@@ -102,7 +102,7 @@ describe('coverage', () => {
         base: 'master',
         head: 'test-branch',
         coverage: process.cwd() + '/coverage/lcov.info',
-        coverageType: 'lcov'
+        coverageFormat: 'lcov'
       });
       expect(result).toEqual({
         covered: 15,

@@ -29479,7 +29479,7 @@ function uncovered(args) {
 }
 exports.uncovered = uncovered;
 async function coveredLines(opts) {
-    return opts.coverageType === 'lcov' ? lcovCoveredLines(opts) : istanbulCoveredLines(opts);
+    return opts.coverageFormat === 'lcov' ? lcovCoveredLines(opts) : istanbulCoveredLines(opts);
 }
 async function istanbulCoveredLines(opts) {
     const coverage = JSON.parse(await (0, promises_1.readFile)(opts.coverage, 'utf8'));
@@ -29524,14 +29524,14 @@ async function uncoveredLines(opts) {
 }
 async function run(opts) {
     const file = opts.coverage;
-    if (opts.coverageType === 'istanbul') {
+    if (opts.coverageFormat === 'istanbul') {
         assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
     }
     return await uncoveredLines({
         base: opts.base,
         head: opts.head,
         coverage: file,
-        coverageType: opts.coverageType
+        coverageFormat: opts.coverageFormat
     });
 }
 exports.run = run;
@@ -31451,10 +31451,12 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
-const coverage = __nccwpck_require__(9136);
-const inputFileArgument = 'coverage-file';
-const coverageTypeArgument = 'coverage-format';
-const baseRefArgument = 'base-ref';
+const covered_1 = __nccwpck_require__(9136);
+function assertCoverageFormat(coverageType) {
+    if (!['lcov', 'istanbul'].includes(coverageType)) {
+        throw new Error(`Invalid coverage type: ${coverageType}`);
+    }
+}
 async function publishCheck(opts) {
     var _a, _b;
     const sha = ((_b = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head) === null || _b === void 0 ? void 0 : _b.sha) || github.context.sha;
@@ -31472,23 +31474,15 @@ async function publishCheck(opts) {
     };
     await octokit.rest.repos.createCommitStatus(output);
 }
-function parseCoverageType(coverageType) {
-    if (!coverageType) {
-        return 'istanbul';
-    }
-    else if (coverageType == 'lcov' || coverageType == 'istanbul') {
-        return coverageType;
-    }
-    throw new Error("coverage-type must be either 'istanbul' or 'lcov'");
-}
 async function run() {
-    const file = core.getInput(inputFileArgument);
-    const coverageType = parseCoverageType(core.getInput(coverageTypeArgument, { required: false }));
-    const result = await coverage.run({
-        base: core.getInput(baseRefArgument),
+    const file = core.getInput('coverage-file', { required: true });
+    const coverageFormat = core.getInput('coverage-format', { required: false });
+    assertCoverageFormat(coverageFormat);
+    const result = await (0, covered_1.run)({
+        base: core.getInput('base-ref'),
         head: github.context.sha,
         coverage: file,
-        coverageType: coverageType
+        coverageFormat
     });
     let covered = 0;
     let total = 0;
@@ -31507,7 +31501,7 @@ async function run() {
         }
     }
     await publishCheck({
-        token: core.getInput('github-token'),
+        token: core.getInput('github-token', { required: true }),
         totals: { covered, total }
     });
 }

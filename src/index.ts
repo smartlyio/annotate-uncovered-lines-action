@@ -1,8 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import * as coverage from './covered';
-
-type CoverageFormat = 'lcov' | 'istanbul';
+import { run as runCoverage, CoverageFormat } from './covered';
 
 function assertCoverageFormat(coverageType: string): asserts coverageType is CoverageFormat {
   if (!['lcov', 'istanbul'].includes(coverageType)) {
@@ -36,11 +34,11 @@ async function run() {
 
   assertCoverageFormat(coverageFormat);
 
-  const result = await coverage.run({
+  const result = await runCoverage({
     base: core.getInput('base-ref'),
     head: github.context.sha,
     coverage: file,
-    coverageType: coverageFormat
+    coverageFormat
   });
   let covered = 0;
   let total = 0;
