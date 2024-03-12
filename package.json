@@ -1,6 +1,6 @@
 {
   "name": "annotate-uncovered-lines-action",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "main": "dist/index.js",
   "author": "Smartly.io Solutions Oy",
   "license": "MIT",
