@@ -6,8 +6,8 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint -c eslint.config.js .",
-    "fixture:pack": "rm -f fixture.tgz && tar czf fixture.tgz test-fixture",
-    "fixture:setup": "rm -rf test-fixture && tar xzf fixture.tgz && yarn --cwd test-fixture install && yarn --cwd test-fixture jest -c jest.config.js --coverage",
+    "fixture:pack": "rm -f fixture.tgz && rm -rf test-fixture/node_modules && tar czf fixture.tgz test-fixture",
+    "fixture:setup": "rm -rf test-fixture && tar xzf fixture.tgz && npm -C test-fixture install && npm -C test-fixture test -c jest.config.js -- --coverage",
     "format": "prettier --write src",
     "format:check": "prettier --check src",
     "clean": "rm -rf dist",
