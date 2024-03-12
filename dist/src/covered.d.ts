@@ -1,5 +1,5 @@
 import * as Range from 'drange';
-export type CoverageFormat = 'lcov' | 'istanbul';
+export type CoverageFormat = 'lcov' | 'istanbul' | 'cobertura';
 type Opts = {
     base: string;
     coverage: string;

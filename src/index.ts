@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import { run as runCoverage, CoverageFormat } from './covered';
 
 function assertCoverageFormat(coverageType: string): asserts coverageType is CoverageFormat {
-  if (!['lcov', 'istanbul'].includes(coverageType)) {
+  if (!['lcov', 'istanbul', 'cobertura'].includes(coverageType)) {
     throw new Error(`Invalid coverage type: ${coverageType}`);
   }
 }
