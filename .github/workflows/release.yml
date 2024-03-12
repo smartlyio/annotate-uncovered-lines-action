@@ -1,18 +1,20 @@
-name: Build and release the action
+name: Release
 
 on:
   push:
     branches: [master]
 
 jobs:
-  @import ./jobs/build
+  build:
+    name: Build
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
 
-  release:
-    runs-on: <%= ubuntu_version %>
-    name: "Build and release action"
-    needs: [build]
+  publish:
+    runs-on: ubuntu-latest
+    name: Publish
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: true
@@ -22,4 +24,3 @@ jobs:
         uses: smartlyio/github-actions@release-action-node-v1
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
-          use_yarn: true

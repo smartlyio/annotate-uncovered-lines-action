@@ -12,9 +12,8 @@ on:
 
 jobs:
   check_labels:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - uses: smartlyio/check-versioning-action@v5
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
