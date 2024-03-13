@@ -1,10 +1,12 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import * as coverage from './covered';
+import { run as runCoverage, CoverageFormat } from './covered';
 
-const inputFileArgument = 'coverage-file';
-const coverageTypeArgument = 'coverage-format';
-const baseRefArgument = 'base-ref';
+function assertCoverageFormat(coverageType: string): asserts coverageType is CoverageFormat {
+  if (!['lcov', 'istanbul', 'cobertura'].includes(coverageType)) {
+    throw new Error(`Invalid coverage type: ${coverageType}`);
+  }
+}
 
 async function publishCheck(opts: { totals: { covered: number; total: number }; token: string }) {
   const sha = github.context.payload.pull_request?.head?.sha || github.context.sha;
@@ -26,24 +28,17 @@ async function publishCheck(opts: { totals: { covered: number; total: number }; 
   await octokit.rest.repos.createCommitStatus(output);
 }
 
-function parseCoverageType(coverageType: string): 'lcov' | 'istanbul' {
-  if (!coverageType) {
-    return 'istanbul';
-  } else if (coverageType == 'lcov' || coverageType == 'istanbul') {
-    return coverageType;
-  }
-  throw new Error("coverage-type must be either 'istanbul' or 'lcov'");
-}
-
 async function run() {
-  const file = core.getInput(inputFileArgument);
-  const coverageType = parseCoverageType(core.getInput(coverageTypeArgument, { required: false }));
+  const file = core.getInput('coverage-file', { required: true });
+  const coverageFormat = core.getInput('coverage-format', { required: false });
 
-  const result = await coverage.run({
-    base: core.getInput(baseRefArgument),
+  assertCoverageFormat(coverageFormat);
+
+  const result = await runCoverage({
+    base: core.getInput('base-ref'),
     head: github.context.sha,
     coverage: file,
-    coverageType: coverageType
+    coverageFormat
   });
   let covered = 0;
   let total = 0;
@@ -62,7 +57,7 @@ async function run() {
     }
   }
   await publishCheck({
-    token: core.getInput('github-token'),
+    token: core.getInput('github-token', { required: true }),
     totals: { covered, total }
   });
 }

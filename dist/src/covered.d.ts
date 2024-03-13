@@ -1,9 +1,10 @@
 import * as Range from 'drange';
+export type CoverageFormat = 'lcov' | 'istanbul' | 'cobertura';
 type Opts = {
     base: string;
     coverage: string;
     head: string;
-    coverageType: 'istanbul' | 'lcov';
+    coverageFormat: CoverageFormat;
 };
 export type Lines = Range;
 export type Path = string;

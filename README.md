@@ -1,7 +1,6 @@
 # Annotate changed lines in this pr that are uncovered
 
-The coverage information is got from the (jest) output json or lcov data files. If a file is ignored from coverage it does not appear in the
-coverage results and thus does not get flagged as uncovered by this action.
+The coverage information is got from the Istanbul output JSON, Cobertura or LCOV data files. If a file is ignored from coverage it does not appear in the coverage results and thus does not get flagged as uncovered by this action.
 
 ## Usage
 

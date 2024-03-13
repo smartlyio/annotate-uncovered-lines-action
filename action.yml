@@ -6,7 +6,7 @@ inputs:
   coverage-file:
     description: containing the coverage data in either istanbul or lcov format
   coverage-format:
-    description: Format of the coverage file - either 'istanbul' or 'lcov'. Default 'istanbul'.
+    description: Format of the coverage file - one of 'istanbul', 'cobertura' or 'lcov'. Default 'istanbul'.
     required: false
     default: 'istanbul'
   base-ref:

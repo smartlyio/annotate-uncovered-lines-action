@@ -81,7 +81,7 @@ describe('coverage', () => {
         base: 'master',
         head: 'test-branch',
         coverage: process.cwd() + '/coverage/coverage-final.json',
-        coverageType: 'istanbul'
+        coverageFormat: 'istanbul'
       });
       expect(result).toEqual({
         covered: 15,
@@ -94,6 +94,7 @@ describe('coverage', () => {
       process.chdir(cwd);
     }
   });
+
   it('generate coverage for lcov', async () => {
     const cwd = process.cwd();
     try {
@@ -102,7 +103,29 @@ describe('coverage', () => {
         base: 'master',
         head: 'test-branch',
         coverage: process.cwd() + '/coverage/lcov.info',
-        coverageType: 'lcov'
+        coverageFormat: 'lcov'
+      });
+      expect(result).toEqual({
+        covered: 15,
+        total: 17,
+        uncoveredLines: {
+          'example.ts': new Range().add(6, 6).add(16, 16)
+        }
+      });
+    } finally {
+      process.chdir(cwd);
+    }
+  });
+
+  it('generate coverage for Cobertura', async () => {
+    const cwd = process.cwd();
+    try {
+      process.chdir('./test-fixture');
+      const result = await coverage.run({
+        base: 'master',
+        head: 'test-branch',
+        coverage: process.cwd() + '/coverage/cobertura-coverage.xml',
+        coverageFormat: 'cobertura'
       });
       expect(result).toEqual({
         covered: 15,
