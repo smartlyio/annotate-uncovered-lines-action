@@ -1,5 +1,5 @@
 import * as coverage from '../src/covered';
-import * as Range from 'drange';
+import { default as Range } from 'drange';
 
 describe('coverage', () => {
   describe('uncovered', () => {

@@ -35864,8 +35864,8 @@ exports.run = exports.uncovered = void 0;
 const promises_1 = __nccwpck_require__(3292);
 const child = __nccwpck_require__(2081);
 const pathFs = __nccwpck_require__(1017);
-const Range = __nccwpck_require__(1188);
-const assert = __nccwpck_require__(9491);
+const drange_1 = __nccwpck_require__(1188);
+const node_assert_1 = __nccwpck_require__(8061);
 const lcov_parser_1 = __nccwpck_require__(6292);
 const cobertura_json_1 = __nccwpck_require__(8689);
 async function runGit(command) {
@@ -35899,7 +35899,7 @@ async function changedLines(opts) {
         const fileHeader = line.match(/^\+\+\+ b\/(.*)/);
         if (fileHeader && fileHeader[1]) {
             currentFile = fileHeader[1];
-            result[currentFile] = new Range();
+            result[currentFile] = new drange_1.default();
             continue;
         }
         const changeHeader = line.match(/^@@ .* \+(\d+)(,\d+)?/);
@@ -35925,8 +35925,8 @@ function uncovered(args) {
     let coveredChanges = 0;
     let totalChanges = 0;
     for (const path of Object.keys(args.changes)) {
-        const uncovered = new Range();
-        const changes = (_a = args.changes[path]) !== null && _a !== void 0 ? _a : new Range();
+        const uncovered = new drange_1.default();
+        const changes = (_a = args.changes[path]) !== null && _a !== void 0 ? _a : new drange_1.default();
         const hits = (_b = args.coverage[path]) === null || _b === void 0 ? void 0 : _b.sort((a, b) => a.start - b.start);
         if (!hits) {
             continue;
@@ -35949,7 +35949,7 @@ function uncovered(args) {
                     break;
                 }
                 if (hit.hits === 0) {
-                    uncovered.add(new Range(subrange.low, subrange.high).intersect(hit.start, hit.end));
+                    uncovered.add(new drange_1.default(subrange.low, subrange.high).intersect(hit.start, hit.end));
                 }
             }
         }
@@ -36017,7 +36017,7 @@ async function lcovCoveredLines(opts) {
 }
 async function coberturaCoveredLines(opts) {
     const fileContents = await (0, promises_1.readFile)(opts.coverage, 'utf8');
-    const records = await (0, cobertura_json_1.parseContent)(fileContents);
+    const records = await cobertura_json_1.default.parseContent(fileContents);
     return coverageRecordsToLines(records.map(record => ({
         path: record.file,
         lines: record.lines
@@ -36031,7 +36031,7 @@ async function uncoveredLines(opts) {
 async function run(opts) {
     const file = opts.coverage;
     if (opts.coverageFormat === 'istanbul') {
-        assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
+        (0, node_assert_1.default)(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
     }
     return await uncoveredLines({
         base: opts.base,
@@ -36154,6 +36154,14 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("net");
+
+/***/ }),
+
+/***/ 8061:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:assert");
 
 /***/ }),
 

@@ -1,10 +1,10 @@
 import { readFile } from 'fs/promises';
 import * as child from 'child_process';
 import * as pathFs from 'path';
-import * as Range from 'drange';
-import * as assert from 'assert';
+import { default as Range } from 'drange';
+import assert from 'node:assert';
 import lcovParser from '@friedemannsommer/lcov-parser';
-import { parseContent as parseCobertura } from '@cvrg-report/cobertura-json';
+import { default as cobertura } from '@cvrg-report/cobertura-json';
 
 export type CoverageFormat = 'lcov' | 'istanbul' | 'cobertura';
 
@@ -181,7 +181,7 @@ async function lcovCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
 
 async function coberturaCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   const fileContents = await readFile(opts.coverage, 'utf8');
-  const records = await parseCobertura(fileContents);
+  const records = await cobertura.parseContent(fileContents);
   return coverageRecordsToLines(
     records.map(record => ({
       path: record.file,
