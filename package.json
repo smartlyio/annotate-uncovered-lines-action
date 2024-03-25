@@ -2,6 +2,7 @@
   "name": "annotate-uncovered-lines-action",
   "version": "3.2.0",
   "main": "dist/index.js",
+  "type": "module",
   "author": "Smartly.io Solutions Oy",
   "license": "MIT",
   "scripts": {
@@ -14,7 +15,7 @@
     "prebundle": "npm run clean",
     "bundle": "ncc build src/index.ts --source-map --license licenses.txt --target es2022",
     "pretest": "npm run fixture:setup",
-    "test": "jest",
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest",
     "typecheck": "tsc --noEmit",
     "version": "npm run bundle && git add -f -- dist/index.js"
   },

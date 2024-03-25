@@ -1,10 +1,10 @@
-const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
 
-module.exports = tseslint.config(
+export default tseslint.config(
   // Global ignores
   {
-    ignores: ["dist/*", 'eslint.config.js', 'jest.config.mjs', 'coverage/*'],
+    ignores: ["dist/*", 'eslint.config.js', 'jest.config.js']
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -12,7 +12,7 @@ module.exports = tseslint.config(
     languageOptions: {
       parserOptions: {
         project: true,
-        tsconfigRootDir: __dirname,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
   },
