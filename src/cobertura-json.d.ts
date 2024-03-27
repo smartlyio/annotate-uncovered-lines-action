@@ -1,4 +1,14 @@
 declare module '@cvrg-report/cobertura-json' {
-  import { LCOVRecord } from 'parse-lcov';
-  export function parseContent(content: string): Promise<LCOVRecord[]>;
+  export function parseContent(content: string): Promise<
+    {
+      title: string;
+      file: string;
+      lines: {
+        details: {
+          line: number;
+          hit: number;
+        }[];
+      };
+    }[]
+  >;
 }

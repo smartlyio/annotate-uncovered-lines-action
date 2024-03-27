@@ -1,10 +1,10 @@
 import { readFile } from 'fs/promises';
 import * as child from 'child_process';
 import * as pathFs from 'path';
-import * as Range from 'drange';
-import * as assert from 'assert';
-import parseLCOV, { LCOVRecord } from 'parse-lcov';
-import { parseContent as parseCobertura } from '@cvrg-report/cobertura-json';
+import { default as Range } from 'drange';
+import assert from 'node:assert';
+import lcovParser from '@friedemannsommer/lcov-parser';
+import { default as cobertura } from '@cvrg-report/cobertura-json';
 
 export type CoverageFormat = 'lcov' | 'istanbul' | 'cobertura';
 
@@ -135,11 +135,13 @@ async function coveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   }
 }
 
-function coverageRecordsToLines(records: LCOVRecord[]): Record<Path, Hits> {
+function coverageRecordsToLines(
+  records: { path: string; lines: { details: { hit: number; line: number }[] } }[]
+): Record<Path, Hits> {
   return records.reduce<Record<Path, Hits>>((result, fileEntry) => {
-    const path = pathFs.isAbsolute(fileEntry.file)
-      ? pathFs.normalize(pathFs.relative(process.cwd(), fileEntry.file))
-      : pathFs.normalize(fileEntry.file);
+    const path = pathFs.isAbsolute(fileEntry.path)
+      ? pathFs.normalize(pathFs.relative(process.cwd(), fileEntry.path))
+      : pathFs.normalize(fileEntry.path);
     result[path] = fileEntry.lines.details.map(({ line, hit }) => ({
       hits: hit,
       start: line,
@@ -173,14 +175,19 @@ async function istanbulCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
 
 async function lcovCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   const fileContents = await readFile(opts.coverage, 'utf8');
-  const lcovData = parseLCOV(fileContents);
+  const lcovData = await lcovParser({ from: fileContents });
   return coverageRecordsToLines(lcovData);
 }
 
 async function coberturaCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   const fileContents = await readFile(opts.coverage, 'utf8');
-  const records = await parseCobertura(fileContents);
-  return coverageRecordsToLines(records);
+  const records = await cobertura.parseContent(fileContents);
+  return coverageRecordsToLines(
+    records.map(record => ({
+      path: record.file,
+      lines: record.lines
+    }))
+  );
 }
 
 export type Result = { covered: number; total: number; uncoveredLines: Record<Path, Range> };

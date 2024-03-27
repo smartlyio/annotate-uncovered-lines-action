@@ -1,4 +1,4 @@
-import * as Range from 'drange';
+import { default as Range } from 'drange';
 export type CoverageFormat = 'lcov' | 'istanbul' | 'cobertura';
 type Opts = {
     base: string;
