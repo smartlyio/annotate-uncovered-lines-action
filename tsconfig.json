@@ -12,5 +12,5 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },
-  "include": ["src/**/*", "test/**/*", "test-fixture/**/*"],
+  "include": ["src/**/*", "test/**/*", "test-fixture/**/*"]
 }
