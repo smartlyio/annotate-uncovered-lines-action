@@ -37689,10 +37689,10 @@ async function runGit(command) {
             ok(collected.join(''));
         });
         run.on('error', (err) => {
-            fail(`got error from rungit "${err.message}" ${err.stack}
+            fail(new Error(`got error from rungit "${err.message}" ${err.stack}
 
       stderr:
-      ${errors.join('')}`);
+      ${errors.join('')}`, { cause: err }));
         });
     });
 }
@@ -37702,7 +37702,7 @@ async function changedLines(opts) {
     let currentFile = null;
     for (const line of stdout.split('\n')) {
         const fileHeader = line.match(/^\+\+\+ b\/(.*)/);
-        if (fileHeader && fileHeader[1]) {
+        if (fileHeader?.[1]) {
             currentFile = fileHeader[1];
             result[currentFile] = new (lib_default())();
             continue;
@@ -37834,7 +37834,7 @@ async function uncoveredLines(opts) {
 async function run(opts) {
     const file = opts.coverage;
     if (opts.coverageFormat === 'istanbul') {
-        external_node_assert_default()(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
+        external_node_assert_default()(file.endsWith('.json'), `input file '${file}' must be json coverage file`);
     }
     return await uncoveredLines({
         base: opts.base,

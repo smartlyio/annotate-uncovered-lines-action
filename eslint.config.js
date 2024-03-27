@@ -4,10 +4,13 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   // Global ignores
   {
-    ignores: ['dist/*', 'eslint.config.js', 'jest.config.js']
+    ignores: ['dist/*']
   },
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
+  ...tseslint.configs.strictTypeChecked,
   {
     languageOptions: {
       parserOptions: {
@@ -17,7 +20,7 @@ export default tseslint.config(
     }
   },
   {
-    files: ['{src,test,test-fixture}/**/*.{ts,tsx,cts,mts}', 'test.ts'],
+    files: ['{src,test,test-fixture}/**/*.{ts,tsx,cts,mts}'],
     rules: {
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
@@ -26,11 +29,12 @@ export default tseslint.config(
     }
   },
   {
-    files: ['test-fixture/**/*.{ts,tsx,cts,mts}', 'test-fixture/jest.config.js', 'test.ts'],
+    files: ['test-fixture/**/*.{ts,tsx,cts,mts,js}'],
     rules: {
       'no-undef': 'off',
       'no-constant-condition': 'off',
-      '@typescript-eslint/no-explicit-any': 'off'
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off'
     }
   }
 );
