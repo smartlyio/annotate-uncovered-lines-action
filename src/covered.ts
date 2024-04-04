@@ -8,12 +8,12 @@ import { default as cobertura } from '@cvrg-report/cobertura-json';
 
 export type CoverageFormat = 'lcov' | 'istanbul' | 'cobertura';
 
-type Opts = {
+interface Opts {
   base: string;
   coverage: string;
   head: string;
   coverageFormat: CoverageFormat;
-};
+}
 
 export type Lines = Range;
 export type Path = string;
@@ -34,20 +34,25 @@ async function runGit(command: string): Promise<string> {
       ok(collected.join(''));
     });
     run.on('error', (err: Error) => {
-      fail(`got error from rungit "${err.message}" ${err.stack}
+      fail(
+        new Error(
+          `got error from rungit "${err.message}" ${err.stack}
 
       stderr:
-      ${errors.join('')}`);
+      ${errors.join('')}`,
+          { cause: err }
+        )
+      );
     });
   });
 }
-async function changedLines(opts: Opts): Promise<Record<Path, Lines>> {
+async function changedLines(opts: Opts): Promise<Record<Path, Lines | undefined>> {
   const stdout = await runGit(`git diff -w -U0 ${opts.base}...${opts.head}`);
-  const result: Record<Path, Lines> = {};
+  const result: Record<Path, Lines | undefined> = {};
   let currentFile: Path | null = null;
   for (const line of stdout.split('\n')) {
     const fileHeader = line.match(/^\+\+\+ b\/(.*)/);
-    if (fileHeader && fileHeader[1]) {
+    if (fileHeader?.[1]) {
       currentFile = fileHeader[1];
       result[currentFile] = new Range();
       continue;
@@ -71,8 +76,8 @@ async function changedLines(opts: Opts): Promise<Record<Path, Lines>> {
 }
 
 export function uncovered(args: {
-  coverage: Record<Path, Hits>;
-  changes: Record<Path, Lines>;
+  coverage: Record<Path, Hits | undefined>;
+  changes: Record<Path, Lines | undefined>;
 }): Result {
   const result: Record<Path, Lines> = {};
   let coveredChanges = 0;
@@ -119,11 +124,11 @@ export function uncovered(args: {
   };
 }
 
-type Hits = Array<{
+type Hits = {
   hits: number;
   start: number;
   end: number;
-}>;
+}[];
 async function coveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   switch (opts.coverageFormat) {
     case 'lcov':
@@ -190,7 +195,11 @@ async function coberturaCoveredLines(opts: Opts): Promise<Record<Path, Hits>> {
   );
 }
 
-export type Result = { covered: number; total: number; uncoveredLines: Record<Path, Range> };
+export interface Result {
+  covered: number;
+  total: number;
+  uncoveredLines: Record<Path, Range>;
+}
 async function uncoveredLines(opts: Opts): Promise<Result> {
   const coverage = await coveredLines(opts);
   const changes = await changedLines(opts);
@@ -200,7 +209,7 @@ async function uncoveredLines(opts: Opts): Promise<Result> {
 export async function run(opts: Opts): Promise<Result> {
   const file = opts.coverage;
   if (opts.coverageFormat === 'istanbul') {
-    assert(/\.json$/.test(file), `input file '${file}' must be json coverage file`);
+    assert(file.endsWith('.json'), `input file '${file}' must be json coverage file`);
   }
 
   return await uncoveredLines({
