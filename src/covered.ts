@@ -51,13 +51,13 @@ async function changedLines(opts: Opts): Promise<Record<Path, Lines | undefined>
   const result: Record<Path, Lines | undefined> = {};
   let currentFile: Path | null = null;
   for (const line of stdout.split('\n')) {
-    const fileHeader = line.match(/^\+\+\+ b\/(.*)/);
+    const fileHeader = /^\+\+\+ b\/(.*)/.exec(line);
     if (fileHeader?.[1]) {
       currentFile = fileHeader[1];
       result[currentFile] = new Range();
       continue;
     }
-    const changeHeader = line.match(/^@@ .* \+(\d+)(,\d+)?/);
+    const changeHeader = /^@@ .* \+(\d+)(,\d+)?/.exec(line);
     if (changeHeader) {
       const start = Number(changeHeader[1]);
       const count = changeHeader[2] ? Number(changeHeader[2].slice(1)) : 1;

@@ -51,7 +51,6 @@ async function run() {
         startLine: line.low,
         endLine: line.high
       };
-      // eslint-disable-next-line no-console
       console.log(data);
       core.warning('This change is not covered by tests', data);
     }
