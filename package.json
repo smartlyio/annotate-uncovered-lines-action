@@ -27,17 +27,17 @@
     "drange": "2.0.1"
   },
   "devDependencies": {
-    "@eslint/js": "^8.57.0",
+    "@eslint/js": "^9.9.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.25",
     "@vercel/ncc": "^0.38.1",
-    "eslint": "^8.57.0",
+    "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
     "jest": "^29.7.0",
     "prettier": "^3.2.5",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2",
-    "typescript-eslint": "^7.2.0"
+    "typescript-eslint": "^8.2.0"
   }
 }

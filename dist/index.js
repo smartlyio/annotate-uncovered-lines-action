@@ -37915,13 +37915,13 @@ async function changedLines(opts) {
     const result = {};
     let currentFile = null;
     for (const line of stdout.split('\n')) {
-        const fileHeader = line.match(/^\+\+\+ b\/(.*)/);
+        const fileHeader = /^\+\+\+ b\/(.*)/.exec(line);
         if (fileHeader?.[1]) {
             currentFile = fileHeader[1];
             result[currentFile] = new (lib_default())();
             continue;
         }
-        const changeHeader = line.match(/^@@ .* \+(\d+)(,\d+)?/);
+        const changeHeader = /^@@ .* \+(\d+)(,\d+)?/.exec(line);
         if (changeHeader) {
             const start = Number(changeHeader[1]);
             const count = changeHeader[2] ? Number(changeHeader[2].slice(1)) : 1;
@@ -38104,7 +38104,6 @@ async function src_run() {
                 startLine: line.low,
                 endLine: line.high
             };
-            // eslint-disable-next-line no-console
             console.log(data);
             core.warning('This change is not covered by tests', data);
         }
