@@ -11,7 +11,7 @@
     {
       "groupName": "dependencies",
       "matchUpdateTypes": ["major"],
-      "depTypeList": ["dependencies"],
+      "matchDepTypes": ["dependencies"],
       "labels": ["minor", "renovate-deps"]
     },
     {
