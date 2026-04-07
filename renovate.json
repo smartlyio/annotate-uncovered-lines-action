@@ -53,7 +53,7 @@
     {
       "depTypeList": ["devDependencies"],
       "matchUpdateTypes": ["patch"],
-      "matchPackagePrefixes": ["@types"],
+      "matchPackageNames": ["@types/**"],
       "labels": ["no release"],
       "automerge": true
     }
