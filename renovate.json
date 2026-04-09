@@ -17,44 +17,49 @@
     {
       "groupName": "dependencies",
       "matchUpdateTypes": ["patch", "minor"],
-      "depTypeList": ["dependencies"],
+      "matchDepTypes": ["dependencies"],
       "labels": ["patch", "renovate-deps"]
     },
     {
-      "depTypeList": ["devDependencies"],
+      "matchDepTypes": ["devDependencies"],
       "matchPackageNames": ["@vercel/ncc"],
       "labels": ["patch", "renovate-deps"]
     },
     {
-      "depTypeList": ["devDependencies"],
-      "excludePackageNames": ["@vercel/ncc", "typescript"],
+      "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["patch", "minor"],
       "labels": ["no release", "renovate-deps"],
-      "automerge": true
+      "automerge": true,
+      "matchPackageNames": ["!@vercel/ncc", "!typescript"]
     },
     {
-      "depTypeList": ["devDependencies"],
+      "matchDepTypes": ["devDependencies"],
       "matchPackageNames": ["typescript"],
       "matchUpdateTypes": ["patch"],
       "labels": ["no release", "renovate-deps"],
       "automerge": true
     },
     {
-      "depTypeList": ["devDependencies"],
+      "matchDepTypes": ["devDependencies"],
       "matchPackageNames": ["typescript"],
       "matchUpdateTypes": ["minor"],
       "labels": ["no release", "renovate-deps"]
     },
     {
-      "depTypeList": ["devDependencies"],
+      "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["major"],
       "labels": ["patch", "renovate-deps"]
     },
     {
-      "depTypeList": ["devDependencies"],
+      "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["patch"],
-      "matchPackageNames": ["@types/**"],
       "labels": ["no release"],
+      "automerge": true,
+      "matchPackageNames": ["@types{/,}**"]
+    },
+    {
+      "matchUpdateTypes": ["pin", "pinDigest"],
+      "minimumReleaseAge": null,
       "automerge": true
     }
   ],
