@@ -20,7 +20,7 @@
     "version": "npm run bundle && git add -f -- dist/index.js"
   },
   "dependencies": {
-    "@actions/core": "^1.10.1",
+    "@actions/core": "^1.11.1",
     "@actions/github": "^9.0.0",
     "@cvrg-report/cobertura-json": "^0.1.3",
     "@friedemannsommer/lcov-parser": "^3.1.1",
