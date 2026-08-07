@@ -26,4 +26,4 @@ This is easiest to achieve with:
 
 ### development
 
-run `yarn package` to create a single file with all the dependencies
+run `pnpm run bundle` to create a single file with all the dependencies

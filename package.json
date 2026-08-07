@@ -1,10 +1,14 @@
 {
   "name": "annotate-uncovered-lines-action",
   "version": "3.2.5",
+  "packageManager": "pnpm@10.34.5",
   "main": "dist/index.js",
   "type": "module",
   "author": "Smartly.io Solutions Oy",
   "license": "MIT",
+  "engines": {
+    "pnpm": "^10.34.5"
+  },
   "scripts": {
     "lint": "eslint -c eslint.config.js .",
     "fixture:pack": "rm -f fixture.tgz && rm -rf test-fixture/node_modules && rm -rf test-fixture/coverage && tar czf fixture.tgz test-fixture",
@@ -12,12 +16,12 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "clean": "rm -rf dist",
-    "prebundle": "npm run clean",
+    "prebundle": "pnpm run clean",
     "bundle": "ncc build src/index.ts --source-map --license licenses.txt --target es2022",
-    "pretest": "npm run fixture:setup",
+    "pretest": "pnpm run fixture:setup",
     "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest",
     "typecheck": "tsc --noEmit",
-    "version": "npm run bundle && git add -f -- dist/index.js"
+    "version": "pnpm run bundle && git add -f -- dist/index.js"
   },
   "dependencies": {
     "@actions/core": "^1.10.1",
