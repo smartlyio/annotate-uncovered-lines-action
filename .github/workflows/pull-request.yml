@@ -5,6 +5,8 @@ on: pull_request
 jobs:
   build:
     name: Build
+    permissions:
+      pull-requests: read
     uses: ./.github/workflows/build.yml
     secrets: inherit
 
