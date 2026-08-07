@@ -1,13 +1,13 @@
 {
   "name": "annotate-uncovered-lines-action",
   "version": "3.2.5",
-  "packageManager": "pnpm@10.34.5",
+  "packageManager": "pnpm@11.20.0",
   "main": "dist/index.js",
   "type": "module",
   "author": "Smartly.io Solutions Oy",
   "license": "MIT",
   "engines": {
-    "pnpm": "^10.34.5"
+    "pnpm": "^11.20.0"
   },
   "scripts": {
     "lint": "eslint -c eslint.config.js .",
