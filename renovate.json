@@ -68,5 +68,5 @@
     "labels": ["no release", "renovate-deps"],
     "automerge": true
   },
-  "minimumReleaseAge": "30 days"
+  "minimumReleaseAge": "3 days"
 }

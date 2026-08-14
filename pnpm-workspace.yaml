@@ -1,6 +1,6 @@
 engineStrict: true
 
-minimumReleaseAge: 43200 # 30 days
+minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
   - '@smartly/*'
 
