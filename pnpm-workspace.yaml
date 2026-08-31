@@ -1,0 +1,13 @@
+engineStrict: true
+
+verifyDepsBeforeRun: false
+
+minimumReleaseAge: 4320 # 3 days
+minimumReleaseAgeExclude:
+  - '@smartly/*'
+
+strictDepBuilds: true
+
+allowBuilds: {}
+
+blockExoticSubdeps: true

@@ -5,6 +5,10 @@ on: pull_request
 jobs:
   build:
     name: Build
+    permissions:
+      contents: read
+      pull-requests: read
+      statuses: write
     uses: ./.github/workflows/build.yml
     secrets: inherit
 
@@ -17,6 +21,11 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: true
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
       - name: Configure git
         uses: smartlyio/github-actions@git-init-userinfo-v1
       - name: Release flow

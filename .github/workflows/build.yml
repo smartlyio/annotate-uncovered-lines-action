@@ -6,15 +6,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Test
+    permissions:
+      contents: read
+      pull-requests: read
+      statuses: write
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
-          cache: npm
-      - run: npm ci
-      - run: npm run bundle
-      - run: npm run test -- --coverage
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run bundle
+      - run: pnpm run test --coverage
       - uses: ./
         with:
           coverage-file: coverage/coverage-final.json
@@ -24,31 +29,34 @@ jobs:
     name: Lint
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
   prettier:
     runs-on: ubuntu-latest
     name: Prettier
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
-          cache: npm
-      - run: npm ci
-      - run: npm run format:check
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run format:check
   typecheck:
     runs-on: ubuntu-latest
     name: Typecheck
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
-          cache: npm
-      - run: npm ci
-      - run: npm run typecheck
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run typecheck
